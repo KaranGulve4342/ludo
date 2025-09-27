@@ -5,7 +5,7 @@ import useSWR from "swr"
 import { io } from "socket.io-client"
 import { apiGet, apiPost } from "./api"
 
-const socketUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000"
+const socketUrl = import.meta.env.VITE_API_URL || "http://localhost:5000"
 
 export default function App() {
   const [gameId, setGameId] = useState("demo")

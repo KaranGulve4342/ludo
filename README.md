@@ -13,7 +13,7 @@ npm run dev
 
 ## 2) Frontend (client/)
 cp client/.env.example client/.env
-# edit VITE_API_BASE_URL if needed
+# edit VITE_API_URL if needed
 cd client
 npm install
 npm run dev

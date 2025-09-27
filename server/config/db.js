@@ -1,39 +1,67 @@
 import mongoose from 'mongoose';
+import { logger } from './logger.js';
 import { env } from './env.js';
-import { baseLogger } from './logger.js';
 
-export async function connectDB() {
+const connectDB = async () => {
   try {
-    await mongoose.connect(env.MONGO_URI, {
-      // Production-ready options for MongoDB Atlas
+    // Updated connection options for MongoDB Atlas
+    const options = {
+      // Connection management
+      maxPoolSize: 10, // Maximum number of connections in the pool
+      serverSelectionTimeoutMS: 5000, // How long to try selecting a server
+      socketTimeoutMS: 45000, // How long a send or receive on a socket can take
+      
+      // Retry logic
       retryWrites: true,
       w: 'majority',
-      maxPoolSize: 10, // Maintain up to 10 socket connections
-      serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-      family: 4, // Use IPv4, skip trying IPv6
-      bufferCommands: false, // Disable mongoose buffering
-      bufferMaxEntries: 0, // Disable mongoose buffering
+      
+      // Authentication & SSL (Atlas handles this automatically)
+      authSource: 'admin',
+    };
+
+    const conn = await mongoose.connect(env.MONGO_URI, options);
+
+    logger.info('MongoDB Atlas connected successfully', {
+      service: 'ludo-server',
+      host: conn.connection.host,
+      database: conn.connection.name,
+      port: conn.connection.port
     });
-    baseLogger.info('Connected to MongoDB Atlas', { 
-      host: mongoose.connection.host,
-      name: mongoose.connection.name,
-      readyState: mongoose.connection.readyState
+
+    // Handle connection events
+    mongoose.connection.on('error', (error) => {
+      logger.error('MongoDB Atlas connection error', {
+        service: 'ludo-server',
+        error: error.message
+      });
     });
-  } catch (err) {
-    baseLogger.error('MongoDB Atlas connection failed', { error: err.message });
-    process.exit(1); // Exit process on connection failure in production
+
+    mongoose.connection.on('disconnected', () => {
+      logger.warn('MongoDB Atlas disconnected', {
+        service: 'ludo-server'
+      });
+    });
+
+    // Handle process termination
+    process.on('SIGINT', async () => {
+      await mongoose.connection.close();
+      logger.info('MongoDB Atlas connection closed through app termination', {
+        service: 'ludo-server'
+      });
+      process.exit(0);
+    });
+
+  } catch (error) {
+    logger.error('MongoDB Atlas connection failed', {
+      service: 'ludo-server',
+      error: error.message
+    });
+    
+    // Exit process with failure in production
+    if (env.NODE_ENV === 'production') {
+      process.exit(1);
+    }
   }
+};
 
-  mongoose.connection.on('disconnected', () => {
-    baseLogger.warn('MongoDB Atlas disconnected');
-  });
-  
-  mongoose.connection.on('reconnected', () => {
-    baseLogger.info('MongoDB Atlas reconnected');
-  });
-
-  mongoose.connection.on('error', (err) => {
-    baseLogger.error('MongoDB Atlas error', { error: err.message });
-  });
-}
+export default connectDB;

@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { env } from './config/env.js';
 import { baseLogger } from './config/logger.js';
-import { connectDB } from './config/db.js';
+import connectDB from './config/db.js';
 import { requestId } from './src/middleware/requestId.js';
 import { requestLogger } from './src/middleware/requestLogger.js';
 import { security } from './src/middleware/security.js';

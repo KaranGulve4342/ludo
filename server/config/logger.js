@@ -44,6 +44,9 @@ export const baseLogger = winston.createLogger({
   defaultMeta: { service: 'ludo-server' },
 });
 
+// Export as 'logger' for compatibility with existing code
+export const logger = baseLogger;
+
 // Create a child logger with requestId for request-scoped logs
 export function withRequestIdLogger(requestId) {
   return baseLogger.child({ requestId });
