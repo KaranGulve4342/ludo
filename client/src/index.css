@@ -1,41 +1,75 @@
-body {
-    background: radial-gradient(
-        circle,
-        rgba(0, 138, 255, 1) 0%,
-        rgba(0, 138, 255, 1) 9%,
-        rgba(0, 138, 255, 1) 16%,
-        rgba(9, 9, 121, 1) 81%
-    );
-    overflow: hidden;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+    background-size: 300% 300%;
+    animation: gradientShift 15s ease infinite;
+    font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    overflow: hidden;
+    min-height: 100vh;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 #root {
     display: flex;
     justify-content: center;
     flex-direction: column;
     height: 100vh;
     width: 100vw;
+    position: relative;
 }
 
 canvas {
-    border-radius: 15px;
-    border: 2px solid black;
+    border-radius: 16px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+canvas:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 }
 .navbar-container {
     display: flex;
     flex-direction: row;
+    gap: 16px;
+    padding: 16px;
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    margin: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .timer {
-    background-color: darkblue;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     position: relative;
     bottom: 60px;
     left: 82px;
-    border: 1px solid white;
-    padding: 1px;
-    width: 30px;
-    height: 20px;
-    border-radius: 5px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 12px;
+    min-width: 40px;
+    height: 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
 }
 .overlay {
     width: 100%;
@@ -43,9 +77,58 @@ canvas {
     position: absolute;
     top: 0;
     left: 0;
-    opacity: 0.9;
+    opacity: 0.95;
     animation: timerAnimation 15s linear infinite;
-    transition-duration: 15s;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    border-radius: 12px;
+}
+
+/* Enhanced responsive design */
+@media (max-width: 768px) {
+    .navbar-container {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+    }
+    
+    .timer {
+        position: static;
+        align-self: center;
+    }
+    
+    canvas {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+/* Loading spinner improvements */
+.loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+}
+
+/* Smooth transitions for all interactive elements */
+button, .clickable {
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+button:hover, .clickable:hover {
+    transform: translateY(-2px);
+}
+
+/* Improved focus states for accessibility */
+button:focus-visible,
+input:focus-visible,
+[role="button"]:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
 }
 #root {
     display: flex;

@@ -1,9 +1,13 @@
 import React, { useEffect, useState, createContext } from 'react';
 import { io } from 'socket.io-client';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import ReactLoading from 'react-loading';
+import { Box, CircularProgress, Typography } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { motion } from 'framer-motion';
 import Gameboard from './components/Gameboard/Gameboard';
 import LoginPage from './components/LoginPage/LoginPage';
+import theme from './theme/theme';
 
 export const PlayerDataContext = createContext();
 export const SocketContext = createContext();
@@ -24,52 +28,94 @@ function App() {
         setPlayerSocket(socket);
     }, []);
 
+    const LoadingScreen = () => (
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100vh',
+                gap: 3,
+            }}
+        >
+            <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            >
+                <CircularProgress 
+                    size={60} 
+                    thickness={4}
+                    sx={{
+                        color: '#fff',
+                        '& .MuiCircularProgress-circle': {
+                            strokeLinecap: 'round',
+                        },
+                    }}
+                />
+            </motion.div>
+            <Typography 
+                variant="h6" 
+                sx={{ 
+                    color: '#fff', 
+                    textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+                    fontWeight: 500,
+                }}
+            >
+                Connecting to game server...
+            </Typography>
+        </Box>
+    );
+
     return (
-        <SocketContext.Provider value={playerSocket}>
-            <Router>
-                <Routes>
-                    <Route
-                        exact
-                        path='/'
-                        Component={() => {
-                            if (redirect) {
-                                return <Navigate to='/game' />;
-                            } else if (playerSocket) {
-                                return <LoginPage />;
-                            } else {
-                                return <ReactLoading type='spinningBubbles' color='white' height={667} width={375} />;
-                            }
-                        }}
-                    ></Route>
-                    <Route
-                        path='/login'
-                        Component={() => {
-                            if (redirect) {
-                                return <Navigate to='/game' />;
-                            } else if (playerSocket) {
-                                return <LoginPage />;
-                            } else {
-                                return <ReactLoading type='spinningBubbles' color='white' height={667} width={375} />;
-                            }
-                        }}
-                    ></Route>
-                    <Route
-                        path='/game'
-                        Component={() => {
-                            if (playerData) {
-                                return (
-                                    <PlayerDataContext.Provider value={playerData}>
-                                        <Gameboard />
-                                    </PlayerDataContext.Provider>
-                                );
-                            } else {
-                                return <Navigate to='/login' />;
-                            }
-                        }}
-                    ></Route>
-                </Routes>
-            </Router>
-        </SocketContext.Provider>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <SocketContext.Provider value={playerSocket}>
+                <Router>
+                    <Routes>
+                        <Route
+                            exact
+                            path='/'
+                            Component={() => {
+                                if (redirect) {
+                                    return <Navigate to='/game' />;
+                                } else if (playerSocket) {
+                                    return <LoginPage />;
+                                } else {
+                                    return <LoadingScreen />;
+                                }
+                            }}
+                        ></Route>
+                        <Route
+                            path='/login'
+                            Component={() => {
+                                if (redirect) {
+                                    return <Navigate to='/game' />;
+                                } else if (playerSocket) {
+                                    return <LoginPage />;
+                                } else {
+                                    return <LoadingScreen />;
+                                }
+                            }}
+                        ></Route>
+                        <Route
+                            path='/game'
+                            Component={() => {
+                                if (playerData) {
+                                    return (
+                                        <PlayerDataContext.Provider value={playerData}>
+                                            <Gameboard />
+                                        </PlayerDataContext.Provider>
+                                    );
+                                } else {
+                                    return <Navigate to='/login' />;
+                                }
+                            }}
+                        ></Route>
+                    </Routes>
+                </Router>
+            </SocketContext.Provider>
+        </ThemeProvider>
     );
 }
 
