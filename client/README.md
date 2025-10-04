@@ -1,11 +1,6 @@
 <h1  align="center">Online Multiplayer Ludo Game </h1>
 
 Ludo Online is a multiplayer web-based implementation of the classic board game Ludo, built using the MERN stack and integrated with SocketIO for real-time communication.
-  
-<p align="center">
->> <a href="https://youtu.be/mGMnH9Nvsyw">Watch YouTube Video here</a> <<
-  </p>
-
 ## Architecture
 
 ![Interface](https://github.com/Wenszel/mern-ludo/blob/main/src/images/architecture.png?raw=true)
@@ -68,7 +63,6 @@ node server.js
 
 ## Screenshots
 
-![Interface](https://github.com/Wenszel/mern-ludo/blob/main/src/images/readme1.png?raw=true)
 
 ![Interface](https://github.com/Wenszel/mern-ludo/blob/main/src/images/lobby.png?raw=true)
 
